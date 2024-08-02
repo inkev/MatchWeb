@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { fetchUserMatchHistoryByName } from '../api/userApi';
+import MatchList from './MatchList'
+import MatchDetails from './MatchDetails'
 
 const Matches = () => {
     const [name, setName] = useState('');
     const [tag, setTag] = useState('');
-    const [matchDetails, setMatchDetails] = useState([]);
+    const [matchDetails, setMatchDetails] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [selectedMatch, setSelectedMatch] = useState(null)
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -16,7 +19,9 @@ const Matches = () => {
 
         try {
             const data = await fetchUserMatchHistoryByName(name, tag);
-            setMatchDetails(data);
+            if (matchDetails != null) {
+              setMatchDetails(data.data);
+            }
             console.log(matchDetails)
         } catch(error) {
             console.error('Error fetching match details', error);
@@ -26,44 +31,59 @@ const Matches = () => {
         }
     };
 
+    const handleMatchClick = (match) => {
+      setSelectedMatch(match)
+    }
+
 return (
-    <div>
+  <div style={{ display: 'flex' }}>
+  <div style={{ width: '300px', padding: '20px' }}>
       <h1>Fetch Match History</h1>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter name"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="tag">Tag:</label>
-          <input
-            id="tag"
-            type="text"
-            value={tag}
-            onChange={(e) => setTag(e.target.value)}
-            placeholder="Enter tag"
-            required
-          />
-        </div>
-        <button type="submit">Fetch Matches</button>
+          <div>
+              <label htmlFor="name">Name:</label>
+              <input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter name"
+                  required
+              />
+          </div>
+          <div>
+              <label htmlFor="tag">Tag:</label>
+              <input
+                  id="tag"
+                  type="text"
+                  value={tag}
+                  onChange={(e) => setTag(e.target.value)}
+                  placeholder="Enter tag"
+                  required
+              />
+          </div>
+          <button type="submit">Fetch Matches</button>
       </form>
 
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
-      {matchDetails.length > 0 && (
-        <div>
-        <h2>Match Details</h2>
-        <pre>{JSON.stringify(matchDetails, null, 2)}</pre>
-        </div>
-      )};
-    </div>
+      <ul>
+        {/* Render MatchList */}
+        {matchDetails != null && matchDetails.length > 0 && (
+            <MatchList matchDetails={matchDetails} onMatchClick={handleMatchClick} />
+        )}
+      </ul>
+  </div>
+
+  <div style={{ flexGrow: 1, padding: '20px' }}>
+      {/* Render MatchDetails if a match is selected */}
+      {selectedMatch ? (
+          <MatchDetails match={selectedMatch} />
+      ) : (
+          <div>Select a match to view details</div>
+      )}
+  </div>
+</div>
   );
 };
 

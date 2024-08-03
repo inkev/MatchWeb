@@ -1,15 +1,15 @@
-import React from "react";
+import React, { useContext } from 'react'
 import { Link } from "react-router-dom";
+import { MatchContext } from '../api/userApi';
 
-const MatchList = ({ matchDetails }) => {
-    const matchItems = [];
+const MatchList = () => {
+    let matchItems = []
+    const ContMatch = useContext(MatchContext)
 
-    for (let i = 0; i < matchDetails.length; i++) {
-        const match = matchDetails[i];
-        const { name } = match.metadata.map;
+    for (let i = 0; i < ContMatch.matches.length; i++) {
         matchItems.push(
              <li key = {i}>
-                <Link to = {`match/${i}`}>Match on Map: {name}</Link>
+                <Link to = {`match/${i}`}>Match on Map: {ContMatch.matches[i].curmap}</Link>
              </li>
         )
     }

@@ -8,6 +8,8 @@ import './index.css'
 import Root from "./routes/root.jsx"
 import Details from "./routes/details.jsx"
 
+import MatchProvider from "./api/userApi.tsx"
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -24,6 +26,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router ={router}/>
+    <MatchProvider>
+      <RouterProvider router ={router}/>
+    </MatchProvider>
   </React.StrictMode>,
 )

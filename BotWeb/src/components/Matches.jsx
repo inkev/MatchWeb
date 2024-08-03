@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { fetchUserMatchHistoryByName } from '../api/userApi';
+import React, { useContext, useState } from 'react';
 import MatchList from './MatchList'
-import MatchDetails from './MatchDetails'
+
+import { MatchContext } from '../api/userApi';
 
 const Matches = () => {
     const [name, setName] = useState('');
@@ -10,6 +10,7 @@ const Matches = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [selectedMatch, setSelectedMatch] = useState(null)
+    const ContMatch = useContext(MatchContext)
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -18,11 +19,7 @@ const Matches = () => {
         setMatchDetails([]);
 
         try {
-            const data = await fetchUserMatchHistoryByName(name, tag);
-            if (matchDetails != null) {
-              setMatchDetails(data.data);
-            }
-            console.log(matchDetails)
+            ContMatch.fetchUserMatchHistoryByName(name, tag)
         } catch(error) {
             console.error('Error fetching match details', error);
             setError('Failed to fetch match details')
@@ -69,8 +66,8 @@ return (
       {error && <p>{error}</p>}
       <ul>
         {/* Render MatchList */}
-        {matchDetails != null && matchDetails.length > 0 && (
-            <MatchList matchDetails={matchDetails} onMatchClick={handleMatchClick} />
+        {ContMatch.matches != null && ContMatch.matches.length > 0 && (
+            <MatchList onMatchClick={handleMatchClick} />
         )}
       </ul>
   </div>

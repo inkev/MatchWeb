@@ -1,12 +1,12 @@
 import React, { useContext, useState } from 'react';
-import MatchList from './MatchList'
+import MatchList from './MatchList';
+import MatchDetails from './MatchDetails';
 
 import { MatchContext } from '../api/userApi';
 
 const Matches = () => {
     const [name, setName] = useState('');
     const [tag, setTag] = useState('');
-    const [matchDetails, setMatchDetails] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [selectedMatch, setSelectedMatch] = useState(null)
@@ -16,7 +16,6 @@ const Matches = () => {
         event.preventDefault();
         setLoading(true);
         setError('');
-        setMatchDetails([]);
 
         try {
             ContMatch.fetchUserMatchHistoryByName(name, tag)

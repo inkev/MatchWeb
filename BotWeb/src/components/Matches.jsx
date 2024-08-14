@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import MatchList from './MatchList';
-import MatchDetails from './MatchDetails';
 
 import { MatchContext } from '../api/userApi';
 
@@ -9,7 +8,6 @@ const Matches = () => {
     const [tag, setTag] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [selectedMatch, setSelectedMatch] = useState(null)
     const ContMatch = useContext(MatchContext)
 
     const handleSubmit = async (event) => {
@@ -26,10 +24,6 @@ const Matches = () => {
             setLoading(false);
         }
     };
-
-    const handleMatchClick = (match) => {
-      setSelectedMatch(match)
-    }
 
 return (
   <div style={{ display: 'flex' }}>
@@ -66,18 +60,9 @@ return (
       <ul>
         {/* Render MatchList */}
         {ContMatch.matches != null && ContMatch.matches.length > 0 && (
-            <MatchList onMatchClick={handleMatchClick} />
+            <MatchList />
         )}
       </ul>
-  </div>
-
-  <div style={{ flexGrow: 1, padding: '20px' }}>
-      {/* Render MatchDetails if a match is selected */}
-      {selectedMatch ? (
-          <MatchDetails match={selectedMatch} />
-      ) : (
-          <div>Select a match to view details</div>
-      )}
   </div>
 </div>
   );

@@ -22,8 +22,23 @@ type FetchUserMatchHistoryByName = (name:string, tag:string) => object
 type details = {
     curmap: string,
     team_id: string,
-    score: {"Lost": number, "Won": number}
+    score: score,
+    players_blue: playerData[],
+    players_red: playerData[]
 };
+
+type score = {
+    Lost: number,
+    Won: number
+}
+type playerData = {
+    party_id: string,
+    name: string,
+    agent: string,
+    kills: number,
+    death: number,
+    assist: number,
+}
 
 type MatchDetails = {
     matches: details[] | undefined;
@@ -44,8 +59,8 @@ const MatchProvider: React.FC<MatchProviderProps> = ({ children }) : React.React
                     "Content-Type": "application/json",
                 },
             })
-            setMatches(ParseData(response.data.data, name))
-            console.log(matches)
+            setMatches(ParseData(response.data.data, name));
+            console.log(matches);
         } catch(error) {
         console.error('Error getting match history', error)
         throw error
@@ -76,7 +91,9 @@ function ParseData (data:any[], name: string) {
         const curr: details = {
             curmap: data[i].metadata.map.name,
             team_id: curr_team_id,
-            score: getTeamScore(data[i], curr_team_id)
+            score: getTeamScore(data[i], curr_team_id),
+            players_blue: getPlayersByTeam(data[i], "Blue"),
+            players_red: getPlayersByTeam(data[i], "Red")
         }
         parsed[i] = curr;
     }
@@ -93,9 +110,29 @@ function getTeamId (data:any, name:string) {
 }
 
 function getTeamScore (data:any, team_id: string) {
-    var score = {"Lost": 0, "Won": 0};
-    (team_id == "Red") ? score = (data.teams[0].rounds) : score = data.teams[1].rounds
-    return score
+    return team_id == "Red" ? data.teams[0].rounds : data.teams[1].rounds
+}
+
+function getPlayersByTeam (data:any, team:string) {
+    let playerData = new Array<playerData>
+    for(let i = 0; i < data.players.length; i++) {
+        if(data.players[i].team_id == team) {
+            playerData.push(getPlayerData(data.player[i]))
+        }
+    }
+    return playerData
+}
+
+function getPlayerData(player: any) {
+    let currPlayer : playerData = {
+        party_id: player.party_id,
+        name: player.name,
+        agent: player.agent.name,
+        kills: player.stats.kills,
+        death: player.stats.deaths,
+        assist: player.stats.assists
+    }
+    return currPlayer
 }
 
 export default MatchProvider

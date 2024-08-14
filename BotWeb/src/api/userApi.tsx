@@ -20,7 +20,9 @@ const API_BASE_URL = 'https://api.henrikdev.xyz';
 type FetchUserMatchHistoryByName = (name:string, tag:string) => object
 
 type details = {
-    curmap: "Map",
+    curmap: string,
+    team_id: string,
+    score: {"Lost": number, "Won": number}
 };
 
 type MatchDetails = {
@@ -42,7 +44,7 @@ const MatchProvider: React.FC<MatchProviderProps> = ({ children }) : React.React
                     "Content-Type": "application/json",
                 },
             })
-            setMatches(ParseData(response.data.data))
+            setMatches(ParseData(response.data.data, name))
             console.log(matches)
         } catch(error) {
         console.error('Error getting match history', error)
@@ -67,15 +69,33 @@ const MatchProvider: React.FC<MatchProviderProps> = ({ children }) : React.React
     );
 }
 
-function ParseData (data:any[]) {
+function ParseData (data:any[], name: string) {
     let parsed = new Array<details>(data.length)
-    for(let i = 0; i < data.length; i++) {
+    for(let i = 0; i < data.length; i++) { 
+        let curr_team_id = getTeamId(data[i], name)
         const curr: details = {
-            curmap: data[i].metadata.map.name
+            curmap: data[i].metadata.map.name,
+            team_id: curr_team_id,
+            score: getTeamScore(data[i], curr_team_id)
         }
-        parsed[i] = curr
+        parsed[i] = curr;
     }
     return parsed
+}
+
+function getTeamId (data:any, name:string) {
+    for(let i = 0; i < data.players.length; i++) {
+        if(name == data.players[i].name) {
+            return data.players[i].team_id
+        }
+    }
+    return "";
+}
+
+function getTeamScore (data:any, team_id: string) {
+    var score = {"Lost": 0, "Won": 0};
+    (team_id == "Red") ? score = (data.teams[0].rounds) : score = data.teams[1].rounds
+    return score
 }
 
 export default MatchProvider

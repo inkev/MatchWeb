@@ -6,8 +6,8 @@ const MatchList = () => {
     let matchItems = []
     const ContMatch = useContext(MatchContext)
     const navStyle = {
-        height: 20,
-        width: 200
+        height: 100,
+        width: 200,
     }
 
     for (let i = 0; i < ContMatch.matches.length; i++) {
@@ -15,8 +15,8 @@ const MatchList = () => {
         matchItems.push(
             <li key = {i}>
                 <Link to = {`match/${i}`}>
-                    <img src = {background} style = {navStyle}/>
-                    Match on Map: {ContMatch.matches[i].curmap}
+                        <h2></h2>
+                        <img src = {background} style = {navStyle}/>
                 </Link>
             </li>
         )

@@ -36,8 +36,8 @@ type playerData = {
     name: string,
     agent: string,
     kills: number,
-    death: number,
-    assist: number,
+    deaths: number,
+    assists: number,
 }
 
 type MatchDetails = {
@@ -117,7 +117,7 @@ function getPlayersByTeam (data:any, team:string) {
     let playerData = new Array<playerData>
     for(let i = 0; i < data.players.length; i++) {
         if(data.players[i].team_id == team) {
-            playerData.push(getPlayerData(data.player[i]))
+            playerData.push(getPlayerData(data.players[i]))
         }
     }
     return playerData
@@ -129,8 +129,8 @@ function getPlayerData(player: any) {
         name: player.name,
         agent: player.agent.name,
         kills: player.stats.kills,
-        death: player.stats.deaths,
-        assist: player.stats.assists
+        deaths: player.stats.deaths,
+        assists: player.stats.assists
     }
     return currPlayer
 }

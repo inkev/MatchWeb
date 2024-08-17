@@ -15,7 +15,6 @@ const MatchList = () => {
         matchItems.push(
             <li key = {i}>
                 <Link to = {`match/${i}`}>
-                        <h2></h2>
                         <img src = {background} style = {navStyle}/>
                 </Link>
             </li>

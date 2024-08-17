@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { MatchContext } from '../api/userApi';
 
 const PlayerDetails = () => {
-    let matchItems = []
+    let bluePlayers = []
+    let redPlayers = []
     let { matchId } = useParams();
     const ContMatch = useContext(MatchContext)
     const navStyle = {
@@ -11,29 +12,63 @@ const PlayerDetails = () => {
         width: 200,
     }
 
-    for (let i = 0; i < ContMatch.matches[matchId].score; i++) {
-        const background = ContMatch.mapImages[ContMatch.matches[i].curmap];
-        matchItems.push(
-            <li key = {i}>
-                <Link to = {`match/${i}`}>
-                        <h2></h2>
-                        <img src = {background} style = {navStyle}/>
-                </Link>
-            </li>
+    for (let i = 0; i < ContMatch.matches[matchId].players_blue; i++) {
+        let player = ContMatch.matches[matchId].players_blue[i];
+        <tr>
+            <td>{player.name}</td>
+            <td>{player.agent}</td>
+            <td>{player.kills}</td>
+            <td>{player.assists}</td>
+            <td>{player.deaths}</td>
+        </tr>
+    }
+
+    for (let i = 0; i < ContMatch.matches[matchId].players_red; i++) {
+        let player = ContMatch.matches[matchId].players_red[i];
+        redPlayers.push(
+            {name: player.name, agent: player.agent, kills: player.kills, assists: player.assists, deaths: player.deaths}
         )
     }
+    
     return (
         <div>
-            <h2>Match History</h2>
+            <h2>Players</h2>
             <nav>
-                {matchItems.length > 0 ? (
-                    <ul>
-                        {matchItems}
-                    </ul>
-                ) : (
-                    <div>No matches found</div>
-                )}
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Agent</th>
+                        <th>Kills</th>
+                        <th>Assists</th>
+                        <th>Deaths</th>
+                    </tr>
+                    {bluePlayers}
+                </table>
             </nav>
+
+            <nav>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Agent</th>
+                        <th>Kills</th>
+                        <th>Assists</th>
+                        <th>Deaths</th>
+                    </tr>
+                    {redPlayers.map((val, key) => {
+                        return (
+                            <tr key = {key}>
+                                <td>{val.name}</td>
+                                <td>{val.agent}</td>
+                                <td>{val.kills}</td>
+                                <td>{val.assists}</td>
+                                <td>{val.deaths}</td>
+                            </tr>
+                        )
+                    })}
+                </table>
+            </nav>
+
         </div>
     )
 }
